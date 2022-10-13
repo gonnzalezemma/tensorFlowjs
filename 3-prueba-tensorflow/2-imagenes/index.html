@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"> </script>
+    <link href="img.css" rel="stylesheet" type="text/css">
+    <title>Document</title>
+</head>
+<body>
+  <div id="valuation"></div>
+    <img id="img"></img>
+    <input type="file" id="inputFile" />
+    <input type="submit" onClick="valuar()" value="Enviar"  />
+    <input type="submit" onClick="evaluarImagen()" value="evaluar"  />
+    
+
+    <script>
+
+function valuar(){
+
+  let input = document.getElementById("inputFile");
+
+  const fReader = new FileReader();
+
+  fReader.readAsDataURL(input.files[0]);
+  
+  fReader.onloadend = function(event){
+    const img = document.getElementById("img");
+    imagen= img;
+    img.src = event.target.result;
+    var MAX_WIDTH = 150;
+    var MAX_HEIGHT = 150;
+            var width = img.width;
+            var height = img.height;
+
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+            }
+            
+  };
+}
+
+ function  evaluarImagen() {
+  cocoSsd.load().then( model => {
+  // detect objects in the image.
+
+model.detect(imagen).then( predictions  => {
+  
+  console.log(predictions[0].class)
+
+  texto =predictions[0].class;
+   document.getElementById("valuation").innerHTML = `<h1>${predictions[0].class}</h1>`
+
+  });
+
+  })
+}
+
+
+
+
+
+
+
+      </script>
+</body>
+</html>

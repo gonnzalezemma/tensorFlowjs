@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.js"></script>
+</head>
+<body>
+    <script>
+        
+        const model = tf.sequential();
+
+// First layer must have an input shape defined.
+model.add(tf.layers.dense({units: 32, inputShape: [50]}));
+// Afterwards, TF.js does automatic shape inference.
+model.add(tf.layers.dense({units: 4}));
+
+// Inspect the inferred shape of the model's output, which equals
+// `[null, 4]`. The 1st dimension is the undetermined batch dimension; the
+// 2nd is the output size of the model's last layer.
+console.log(JSON.stringify(model.outputs[0].shape));
+        //formula 
+// y= 2x-1
+    </script>
+</body>
+</html>        

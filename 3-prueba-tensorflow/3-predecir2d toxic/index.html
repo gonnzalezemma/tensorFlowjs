@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity"></script>
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="text"></div>
+
+  <input id="texto" type="text" />
+  <input type="submit" onClick="prueba()" value="evaluar" />
+  <div id="texti0"></div>
+  <div id="texti1"></div>  
+  <div id="texti2"></div> 
+  <div id="texti3"></div>
+  <div id="texti4"></div>  
+  <div id="texti5"></div> 
+  <div id="texti6"></div>
+  <script>
+    function prueba() {
+
+
+      const threshold = 0.9;
+
+
+      toxicity.load(threshold).then(model => {
+        const sentences = document.getElementById("texto").value;
+
+        //hello, mother fucker you are my friend good job
+        model.classify(sentences).then(predictions => {
+          let prediction=[];
+          let respuesta = [];
+          for (let i = 0; i < 7; i++) {
+
+           prediction[i]={
+              identify: predictions[i].label,
+              resultado: predictions[i].results[0].match,
+              user:'usuario'+[i]
+            };
+            console.log(prediction);
+            console.log(prediction[i].user);
+         respuesta[i] = `<p id="prediction${i}">${prediction[i].identify+': '+
+          prediction[i].resultado}</p>`;
+
+          if(prediction[i].resultado==true){
+              document.getElementById("text").innerHTML=`<h1> This sentence is ${prediction[i].identify}, user: ${prediction[i].user} is banned<h1>`;
+            }else{
+              document.getElementById("text").innerHTML=`<h1>This sentence is not toxic<h1>`;
+            }
+         document.getElementById("texti"+i).innerHTML=respuesta[i];
+
+          }
+          
+
+
+
+          /*
+          prints:
+          {
+            "label": "identity_attack",
+            "results": [{
+              "probabilities": [0.9659664034843445, 0.03403361141681671],
+              "match": false
+            }]
+          },
+          {
+            "label": "insult",
+            "results": [{
+              "probabilities": [0.08124706149101257, 0.9187529683113098],
+              "match": true
+            }]
+          },
+          ...
+           */
+        });
+      });
+
+
+
+
+    }
+  </script>
+</body>
+
+</html>

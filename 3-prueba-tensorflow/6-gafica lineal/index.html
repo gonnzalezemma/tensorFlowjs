@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script>
+    <title>Document</title>
+</head>
+
+<div id="mostrarResultados">
+
+</div>
+<body>
+
+
+    <script>
+        const tensorFlow = async () => {
+         
+          const xs = tf.tensor([0, 1, 2, 3, 4, 5, 6, 7]);
+          
+          const ys = tf.tensor([3, 4, 5, 6, 7, 8, 9, 10]);
+  
+        
+          const modelo = tf.sequential();
+  
+          modelo.add(
+            tf.layers.dense({
+              inputShape: 1,
+              units: 1,
+            })
+          );
+  
+          modelo.compile({
+            optimizer: "sgd",
+            loss: "meanSquaredError",
+          });
+  
+          // Entrenamiento.
+          await modelo
+            .fit(xs, ys, {
+              epochs: 300,
+            })
+            .then((history) => {
+              const incognitasXs = tf.tensor([
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+              ]);
+              const [...mostrar] = modelo.predict(incognitasXs).dataSync();
+  
+              console.log(mostrar);
+  
+              mostrar.map((num, i) => {
+                console.log(
+                  `Para ${
+                    incognitasXs.dataSync()[i]
+                  } el resultado es ${Math.round(num)}`
+                );
+              });
+  
+              mostrar.map((y, x) => ({ x, y }));
+  
+              const resultados = mostrar.map((y, x) => ({ x, y }));
+  
+              console.log(resultados);
+              const series = ["y = x + 3"];
+              const data = { values: [resultados], series };
+  
+              const surfaceRectaLineal = {
+                name: "Recta Lineal",
+                tab: "Resultados",
+              };
+  
+              tfvis.render.linechart(surfaceRectaLineal, data);
+            });
+  
+          const model = tf.sequential({
+            layers: [
+              tf.layers.dense({
+                inputShape: 1,
+                units: 1,
+                activation: "relu",
+              }),
+            ],
+          });
+  
+          model.compile({
+            optimizer: "sgd",
+            loss: "meanSquaredError",
+            metrics: ["accuracy"],
+          });
+  
+          function onBatchEnd(batch, logs) {
+            console.log("Accuracy", logs.acc);
+          }
+  
+          const surfacePerdida = {
+            name: "Grafico De pérdida",
+            tab: "Grafico De pérdida",
+          };
+  
+          
+          await model.fit(xs, ys, {
+            epochs: 10,
+            batchSize: 32,
+            callbacks: tfvis.show.fitCallbacks(surfacePerdida, ["loss", "acc"]),
+          });
+        };
+  
+        document.addEventListener("DOMContentLoad", tensorFlow());
+      </script>
+</body>
+</html>

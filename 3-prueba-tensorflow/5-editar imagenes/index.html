@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.0.0/dist/tf.min.js"></script>
+    <title>Editar imagenes con tf.js</title>
+</head>
+<body>
+    <h1>Espejar imagen con tensores</h1>
+    <div>
+      <img id="compu" src="/computadora.jpeg" />
+      <canvas id="compuCanvas" />
+
+    </div>
+
+    <script>
+    
+    const d = document;
+    d.addEventListener("DOMContentLoaded", () => {
+      console.log("Inicio", tf.memory().numTensors, tf.memory().numBytes);
+
+      const $compuImage = d.getElementById("compu"),
+        $compuCanvas = d.getElementById("compuCanvas"),
+        newDimension = [510, 510];
+
+      console.log("Antes de la modificación", tf.memory().numTensors, tf.memory().numBytes);
+
+      const compuTensor = tf.browser.fromPixels($compuImage),
+        tensorCompuRevertido = tf.reverse(compuTensor, 1),
+        tensorCompuModificado = tf.image.resizeNearestNeighbor(
+          tensorCompuRevertido,
+          newDimension,
+          true
+        );
+
+      console.log("Despues de la modificación", tf.memory().numTensors, tf.memory().numBytes);
+
+      tf.browser.toPixels(tensorCompuModificado, $compuCanvas).then(() => {
+        compuTensor.dispose();
+        tensorCompuRevertido.dispose();
+        tensorCompuRevertido.dispose();
+
+        console.log("Final", tf.memory().numTensors, tf.memory().numBytes);
+      });
+
+      
+    });
+  </script>
+</body>
+</html>
